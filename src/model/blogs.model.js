@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 
-
 const blogsSchema = new mongoose.Schema({
     title: {
       type: String,
@@ -14,10 +13,11 @@ const blogsSchema = new mongoose.Schema({
         type: String,
         required: [true, "blogimage is required"],
       },
-     postedBy: {
-        type: String,
-        required: [true, "post is required"],
-      },
+      postedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: [true, "postedBy is required"],
+    },
   },
 {
     timestamps : true

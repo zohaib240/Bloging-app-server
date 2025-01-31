@@ -1,11 +1,11 @@
 import jwt from "jsonwebtoken";
-import User from "../model/users.model.js";
+import User from  "../model/users.model.js"
 import bcrypt from "bcrypt"
 import { v2 as cloudinary } from "cloudinary";
 import fs from "fs";
+import { generateAccesstoken, generateRefreshtoken } from "../utils/tokens.utils.js";
 
-
-// cloudinary image upload k lye
+// cloudinary image upload k lye -------->>>>
 
 cloudinary.config({ 
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -13,21 +13,15 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET, // Click 'View API Keys' above to copy your API secret
 });
 
-const generateAccesstoken = (user) =>{
-  return jwt.sign({email : user.email},process.env.ACCESS_JWT_SECRET, {
-   expiresIn : "6h"
-  })
- }
- const generateRefreshtoken = (user) =>{
-  return jwt.sign({email : user.email},process.env.REFRESH_JWT_SECRET, {
-   expiresIn : "6h"
-  })
- }
 
-//  register User
+//  register User-------->>>>>
 
 const registerUser = async (req, res) => {
   const { userName, fullName, email, password } = req.body;
+
+  if (!req.file) {
+    return res.status(400).json({ error: "Profile image is required" });
+  }
 
   if (!userName || !fullName || !email || !password) {
     return res.status(400).json({ error: "Email or password missing" });
@@ -41,16 +35,12 @@ const registerUser = async (req, res) => {
     }
 
     // Check if image is uploaded
-    if (!req.file) {
-      return res.status(400).json({ error: "Profile image is required" });
-    }
     const profileImage = req.file.path;
     console.log(profileImage);
 
     const profilePicture = await uploadImageToCloudinary(profileImage);
     console.log(profilePicture);
     
-
     const createUser = await User.create({
       userName,
       fullName,
@@ -58,7 +48,6 @@ const registerUser = async (req, res) => {
       password,
       profilePicture,
     });
-
     res.json({
       message: "User registered successfully",
       data: createUser,
@@ -68,7 +57,7 @@ const registerUser = async (req, res) => {
   }
 };
 
-// login User
+// login User --------->>>>>>
 
 const loginUser = async (req,res) => {
 const{email,password} = req.body
@@ -79,7 +68,7 @@ if (!password) return res.status(400).json({ message: "password required" });
 const user = await User.findOne({email})
 if(!user)return res.status(404).json({messege : "user no found"})
 
-  // password compare krwayenga bcrypt
+  // password compare krwayga bcrypt 
 const ispasswordValid = bcrypt.compare(password,user.password)  
 if(!ispasswordValid) return res.status().json({messege : "incorrect password"})
 
@@ -90,23 +79,27 @@ const refreshToken =generateRefreshtoken(user)
 res.cookie("refreshToken", refreshToken ,  { http: true, secure: false })
 res.json({
 message : "login successfully",
-refreshToken,
 accessToken,
 data : user 
 })
 }
 
 
-// logout user 
+// logout user --------->>>>>
 
-const logoutUser = (req,res) =>{
-  res.clearCookie("refreshToken")
-  res.json({
-    message : "logout Successfully"
-  })
-}
+const logoutUser = (req, res) => {
+  if (!req.user) {
+    return res.status(401).json({ message: "Unauthorized. Please log in first." });
+  }
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production", 
+    sameSite: "Strict" // Secure cookie policy
+  });
+  res.json({ message: "Logout successful." });
+};
 
-// refreresh Token
+// refreresh Token ------->>>>>>>>
 
 const refreshToken = async (req,res)=>{
   const refreshToken = req.cookies.refreshToken || req.body.refreshToken
@@ -129,53 +122,24 @@ const refreshToken = async (req,res)=>{
   
   }
 
+// upload image on cloudinary  and delete in upload folder ------->>>>>
 
-
-  // image cloudinary p jaraha h or server se image delete horha h fs ki help se
-
-const uploadImageToCloudinary  = async (localpath)=>{
-  try {const uploadResult = await cloudinary.uploader
-     .upload(
-      localpath,{
-        resource_type: "auto",}
-     )
-     fs.unlinkSync(localpath);
-  return uploadResult.url;
-    }
-     catch(error) {
-         console.log(error);
-     };
-  console.log(uploadResult);
-} 
-
-// image ka url cloudinary se arha h
-
-const uploadImage = async(req,res)=>{
-  if (!req.file)
-    return res.status(400).json({
-      message: "no image file uploaded",
+const uploadImageToCloudinary = async (localpath) => {
+  try {
+    const uploadResult = await cloudinary.uploader.upload(localpath, {
+      resource_type: "auto",
     });
 
-    try {
-      const uploadResult = await uploadImageToCloudinary(req.file.path);
-      console.log(uploadResult);
-      
-      if(!uploadResult)
-        res.json({
-      messege : "err accurd while uploading"
-      })
-
-      res.json({
-        message: "image uploaded successfully",
-        url: uploadResult,
-      });
-
-    } catch (error) {
-      res.status(500).json({
-        message : "err accured while uploading image"
-      })
+    if (uploadResult) {
+      fs.unlinkSync(localpath); // Delete local image
     }
-}
+
+    return uploadResult.url;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Error uploading image to Cloudinary");
+  }
+};
 
 
-export {registerUser,loginUser,logoutUser,refreshToken,uploadImage}
+export {registerUser,loginUser,logoutUser,refreshToken}
