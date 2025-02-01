@@ -22,4 +22,4 @@ app.use(cookieParser());
 
 
 // Export the Express app for Vercel
-export default app;
+export {app};
