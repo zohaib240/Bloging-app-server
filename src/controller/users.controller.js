@@ -80,6 +80,7 @@ res.cookie("refreshToken", refreshToken ,  { http: true, secure: false })
 res.json({
 message : "login successfully",
 accessToken,
+refreshToken,
 data : user 
 })
 }
