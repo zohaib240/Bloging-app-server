@@ -1,3 +1,5 @@
+import dotenv from "dotenv";
+dotenv.config();
 import jwt from "jsonwebtoken";
 import User from  "../model/users.model.js"
 import bcrypt from "bcrypt"
@@ -13,12 +15,10 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET, // Click 'View API Keys' above to copy your API secret
 });
 
-
 //  register User-------->>>>>
 
 const registerUser = async (req, res) => {
   const { userName, fullName, email, password } = req.body;
-
   if (!req.file) {
     return res.status(400).json({ error: "Profile image is required" });
   }
@@ -126,10 +126,13 @@ const refreshToken = async (req,res)=>{
 // upload image on cloudinary  and delete in upload folder ------->>>>>
 
 const uploadImageToCloudinary = async (localpath) => {
+  console.log(localpath);
   try {
     const uploadResult = await cloudinary.uploader.upload(localpath, {
       resource_type: "auto",
     });
+
+    console.log(uploadResult);
 
     if (uploadResult) {
       fs.unlinkSync(localpath); // Delete local image

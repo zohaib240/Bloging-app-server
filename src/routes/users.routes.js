@@ -1,6 +1,6 @@
 import express from 'express';
 import { registerUser, loginUser, logoutUser, refreshToken} from '../controller/users.controller.js';
-import { upload } from "../middleware/multer.middleware.js";
+import {upload} from "../middleware/multer.middleware.js"
 import authenticateUser from "../middleware/auth.middleware.js"; // Token verification middleware
 
 const router = express.Router();
