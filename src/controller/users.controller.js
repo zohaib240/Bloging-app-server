@@ -125,25 +125,52 @@ const refreshToken = async (req,res)=>{
 
 // upload image on cloudinary  and delete in upload folder ------->>>>>
 
+
+
+// Upload Image to Cloudinary (and delete local file from uploads folder)
 const uploadImageToCloudinary = async (localpath) => {
-  console.log(localpath);
   try {
+    // Upload image to Cloudinary directly from the localpath
     const uploadResult = await cloudinary.uploader.upload(localpath, {
-      resource_type: "auto",
+      resource_type: "auto", // Automatically detects the resource type
     });
 
-    console.log(uploadResult);
+    // Log the result for debugging
+    console.log("Upload result:", uploadResult);
 
-    if (uploadResult) {
-      fs.unlinkSync(localpath); // Delete local image
-    }
+    // After successful upload, delete the local file (Only for local dev server, Vercel doesn't need this)
+    fs.unlinkSync(localpath); // Delete local file after upload
 
+    // Return the Cloudinary URL
     return uploadResult.url;
+
   } catch (error) {
-    console.log(error);
+    console.log("Error uploading image to Cloudinary:", error);
     throw new Error("Error uploading image to Cloudinary");
   }
 };
+
+
+
+// const uploadImageToCloudinary = async (localpath) => {
+//   console.log(localpath);
+//   try {
+//     const uploadResult = await cloudinary.uploader.upload(localpath, {
+//       resource_type: "auto",
+//     });
+
+//     console.log(uploadResult);
+
+//     if (uploadResult) {
+//       fs.unlinkSync(localpath); // Delete local image
+//     }
+
+//     return uploadResult.url;
+//   } catch (error) {
+//     console.log(error);
+//     throw new Error("Error uploading image to Cloudinary");
+//   }
+// };
 
 
 export {registerUser,loginUser,logoutUser,refreshToken}
