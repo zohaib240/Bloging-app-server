@@ -9,11 +9,35 @@ import { generateAccesstoken, generateRefreshtoken } from "../utils/tokens.utils
 
 // cloudinary image upload k lye -------->>>>
 
-cloudinary.config({ 
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET, // Click 'View API Keys' above to copy your API secret
-});
+const uploadImageToCloudinary = async (localPath) => {
+  // Configuration
+  cloudinary.config({
+      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+      api_key: process.env.CLOUDINARY_API_KEY,
+      api_secret: process.env.CLOUDINARY_API_SECRET,
+  });
+  try {
+      if (!localPath) return "nothing found";
+      const uploadResult = await cloudinary.uploader
+          .upload(
+              localPath, {
+              resource_type: "auto",
+          }
+          )
+          return (uploadResult.url);
+      } catch (error) {
+          console.log(error);
+          return null;
+      }finally{
+          fs.unlink(localPath, (err) => {
+              if (err) {
+                  console.error(`Error deleting temporary file at ${localPath}:`, err);
+              } else {
+                  console.log(`Temporary file at ${localPath} deleted successfully.`);
+              }
+          });
+      }
+}
 
 //  register User-------->>>>>
 
@@ -126,29 +150,6 @@ const refreshToken = async (req,res)=>{
 // upload image on cloudinary  and delete in upload folder ------->>>>>
 
 
-
-// Upload Image to Cloudinary (and delete local file from uploads folder)
-const uploadImageToCloudinary = async (localpath) => {
-  try {
-    // Upload image to Cloudinary directly from the localpath
-    const uploadResult = await cloudinary.uploader.upload(localpath, {
-      resource_type: "auto", // Automatically detects the resource type
-    });
-
-    // Log the result for debugging
-    console.log("Upload result:", uploadResult);
-
-    // After successful upload, delete the local file (Only for local dev server, Vercel doesn't need this)
-    fs.unlinkSync(localpath); // Delete local file after upload
-
-    // Return the Cloudinary URL
-    return uploadResult.url;
-
-  } catch (error) {
-    console.log("Error uploading image to Cloudinary:", error);
-    throw new Error("Error uploading image to Cloudinary");
-  }
-};
 
 
 
