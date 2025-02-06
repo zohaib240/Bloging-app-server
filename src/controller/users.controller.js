@@ -9,35 +9,59 @@ import { generateAccesstoken, generateRefreshtoken } from "../utils/tokens.utils
 
 // cloudinary image upload k lye -------->>>>
 
-const uploadImageToCloudinary = async (localPath) => {
-  // Configuration
-  cloudinary.config({
-      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-      api_key: process.env.CLOUDINARY_API_KEY,
-      api_secret: process.env.CLOUDINARY_API_SECRET,
-  });
+// const uploadImageToCloudinary = async (localPath) => {
+//   // Configuration
+//   cloudinary.config({
+//       cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+//       api_key: process.env.CLOUDINARY_API_KEY,
+//       api_secret: process.env.CLOUDINARY_API_SECRET,
+//   });
+//   try {
+//       if (!localPath) return "nothing found";
+//       const uploadResult = await cloudinary.uploader
+//           .upload(
+//               localPath, {
+//               resource_type: "auto",
+//           }
+//           )
+//           return (uploadResult.url);
+//       } catch (error) {
+//           console.log(error);
+//           return null;
+//       }finally{
+//           fs.unlink(localPath, (err) => {
+//               if (err) {
+//                   console.error(`Error deleting temporary file at ${localPath}:`, err);
+//               } else {
+//                   console.log(`Temporary file at ${localPath} deleted successfully.`);
+//               }
+//           });
+//       }
+// }
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+
+const uploadImageToCloudinary = async (fileBuffer) => {
   try {
-      if (!localPath) return "nothing found";
-      const uploadResult = await cloudinary.uploader
-          .upload(
-              localPath, {
-              resource_type: "auto",
-          }
-          )
-          return (uploadResult.url);
-      } catch (error) {
-          console.log(error);
-          return null;
-      }finally{
-          fs.unlink(localPath, (err) => {
-              if (err) {
-                  console.error(`Error deleting temporary file at ${localPath}:`, err);
-              } else {
-                  console.log(`Temporary file at ${localPath} deleted successfully.`);
-              }
-          });
-      }
-}
+    // Using upload method instead of upload_stream
+    const result = await cloudinary.uploader.upload(fileBuffer, {
+      folder: "uploads", 
+      resource_type: "auto",
+    });
+    
+    // Return the URL of the uploaded image
+    return result.secure_url;
+  } catch (error) {
+    console.error("Error uploading to Cloudinary:", error);
+    return null;
+  }
+};
+
 
 //  register User-------->>>>>
 
