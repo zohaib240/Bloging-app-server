@@ -3,64 +3,35 @@ dotenv.config();
 import jwt from "jsonwebtoken";
 import User from  "../model/users.model.js"
 import bcrypt from "bcrypt"
-import { v2 as cloudinary } from "cloudinary";
-import fs from "fs";
 import { generateAccesstoken, generateRefreshtoken } from "../utils/tokens.utils.js";
+import { uploadImageToCloudinary } from "../utils/cloudinary.utils.js";
 
 // cloudinary image upload k lye -------->>>>
 
-// const uploadImageToCloudinary = async (localPath) => {
-//   // Configuration
-//   cloudinary.config({
-//       cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-//       api_key: process.env.CLOUDINARY_API_KEY,
-//       api_secret: process.env.CLOUDINARY_API_SECRET,
-//   });
+// cloudinary.config({
+//   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+//   api_key: process.env.CLOUDINARY_API_KEY,
+//   api_secret: process.env.CLOUDINARY_API_SECRET,
+// });
+
+// const uploadImageToCloudinary = async (fileBuffer) => {
 //   try {
-//       if (!localPath) return "nothing found";
-//       const uploadResult = await cloudinary.uploader
-//           .upload(
-//               localPath, {
-//               resource_type: "auto",
-//           }
-//           )
-//           return (uploadResult.url);
-//       } catch (error) {
-//           console.log(error);
+//     const result = await cloudinary.uploader.upload_stream(
+//       { resource_type: "auto" }, // No folder specified
+//       (error, result) => {
+//         if (error) {
+//           console.log("Cloudinary upload failed:", error);
 //           return null;
-//       }finally{
-//           fs.unlink(localPath, (err) => {
-//               if (err) {
-//                   console.error(`Error deleting temporary file at ${localPath}:`, err);
-//               } else {
-//                   console.log(`Temporary file at ${localPath} deleted successfully.`);
-//               }
-//           });
+//         }
+//         console.log("Uploaded Image URL:", result.secure_url);
+//         return result.secure_url;
 //       }
-// }
-
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
-
-
-const uploadImageToCloudinary = async (fileBuffer) => {
-  try {
-    // Using upload method instead of upload_stream
-    const result = await cloudinary.uploader.upload(fileBuffer, {
-      folder: "uploads", 
-      resource_type: "auto",
-    });
-    
-    // Return the URL of the uploaded image
-    return result.secure_url;
-  } catch (error) {
-    console.error("Error uploading to Cloudinary:", error);
-    return null;
-  }
-};
+//     ).end(fileBuffer);
+//   } catch (error) {
+//     console.error("Error uploading to Cloudinary", error);
+//     return null;
+//   }
+// };
 
 
 //  register User-------->>>>>
@@ -170,32 +141,6 @@ const refreshToken = async (req,res)=>{
   res.json({ message: "access token generated", accesstoken: generateToken ,decodedToken});
   
   }
-
-// upload image on cloudinary  and delete in upload folder ------->>>>>
-
-
-
-
-
-// const uploadImageToCloudinary = async (localpath) => {
-//   console.log(localpath);
-//   try {
-//     const uploadResult = await cloudinary.uploader.upload(localpath, {
-//       resource_type: "auto",
-//     });
-
-//     console.log(uploadResult);
-
-//     if (uploadResult) {
-//       fs.unlinkSync(localpath); // Delete local image
-//     }
-
-//     return uploadResult.url;
-//   } catch (error) {
-//     console.log(error);
-//     throw new Error("Error uploading image to Cloudinary");
-//   }
-// };
 
 
 export {registerUser,loginUser,logoutUser,refreshToken}
