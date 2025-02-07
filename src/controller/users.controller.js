@@ -128,17 +128,40 @@ const logoutUser = (req, res) => {
 // }
 
 
+// const singleUser = async (req, res) => {
+//   try {
+//     const user = await User.findById(req.user).select('-password');
+//     if (!user) return res.status(404).json({ message: "User not found" });
+
+//     res.json(user);
+//   } catch (error) {
+//     res.status(500).json({ message: "Server error" });
+//   }
+
+// }
+
+
+
 const singleUser = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select('-password');
-    if (!user) return res.status(404).json({ message: "User not found" });
+      console.log("Decoded User from Middleware:", req.user); // Debugging ke liye
 
-    res.json(user);
+      if (!req.user || !req.user.id) {
+          return res.status(401).json({ message: "Unauthorized, no user found in token" });
+      }
+
+      const user = await User.findById(req.user.id).select('-password -publishedBlogs');
+      if (!user) {
+          return res.status(404).json({ message: "User not found in database" });
+      }
+
+      res.status(200).json(user);
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+      console.error(error);
+      res.status(500).json({ message: "Server error" });
   }
+};
 
-}
 
 // refreresh Token ------->>>>>>>>
 
