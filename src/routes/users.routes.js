@@ -7,7 +7,7 @@ const router = express.Router();
 
 // Public routes
 router.post('/auth/login', loginUser); 
-router.get('/auth/singleUser', authenticateUser, singleUser); 
+router.get('/auth/singleUser', authenticateUser, singleUser);
 router.post('/auth/logout', authenticateUser, logoutUser); 
 router.post('/refreshToken', refreshToken); 
 // Register route with image upload
