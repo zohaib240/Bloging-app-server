@@ -83,7 +83,7 @@ const user = await User.findOne({email})
 if(!user)return res.status(404).json({messege : "user no found"})
 
   // password compare krwayga bcrypt 
-const ispasswordValid = bcrypt.compare(password,user.password)  
+const ispasswordValid = await bcrypt.compare(password,user.password)  
 if(!ispasswordValid) return res.status().json({messege : "incorrect password"})
 
 // token generate
@@ -116,17 +116,29 @@ const logoutUser = (req, res) => {
 
 // get single user -------->>>>>
 
-const singleUser = async (req,res) =>{
-try {
-  const user = await User.findById(req.user.id).select('-password'); //ta k Password rerturn na ho
-  if (!user) {
-     res.status(400).json({message:'user not found'})
-  }
-} catch (error) {
-  res.status(500).json({message : "server ERR"})
-}
-}
+// const singleUser = async (req,res) =>{
+// try {
+//   const user = await User.findById(req.user.id).select('-password'); //ta k Password rerturn na ho
+//   if (!user) {
+//      res.status(400).json({message:'user not found'})
+//   }
+// } catch (error) {
+//   res.status(500).json({message : "server ERR"})
+// }
+// }
 
+
+const singleUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select('-password');
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+
+}
 
 // refreresh Token ------->>>>>>>>
 
