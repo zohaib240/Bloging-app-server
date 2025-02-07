@@ -1,5 +1,5 @@
 import express from 'express';
-import { registerUser, loginUser, logoutUser, refreshToken} from '../controller/users.controller.js';
+import { registerUser, loginUser, logoutUser, refreshToken, singleUser} from '../controller/users.controller.js';
 import {upload} from "../middleware/multer.middleware.js"
 import authenticateUser from "../middleware/auth.middleware.js"; // Token verification middleware
 
@@ -7,6 +7,7 @@ const router = express.Router();
 
 // Public routes
 router.post('/auth/login', loginUser); 
+router.get('/auth/singleUser', authenticateUser, singleUser); 
 router.post('/auth/logout', authenticateUser, logoutUser); 
 router.post('/refreshToken', refreshToken); 
 // Register route with image upload

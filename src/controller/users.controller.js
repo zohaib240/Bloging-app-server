@@ -114,6 +114,20 @@ const logoutUser = (req, res) => {
   res.json({ message: "Logout successful." });
 };
 
+// get single user -------->>>>>
+
+const singleUser = async (req,res) =>{
+try {
+  const user = await User.findById(req.user.id).select('-password'); //ta k Password rerturn na ho
+  if (!user) {
+     res.status(400).json({message:'user not found'})
+  }
+} catch (error) {
+  res.status(500).json({message : "server ERR"})
+}
+}
+
+
 // refreresh Token ------->>>>>>>>
 
 const refreshToken = async (req,res)=>{
@@ -138,4 +152,4 @@ const refreshToken = async (req,res)=>{
   }
 
 
-export {registerUser,loginUser,logoutUser,refreshToken}
+export {registerUser,loginUser,singleUser,logoutUser,refreshToken}
