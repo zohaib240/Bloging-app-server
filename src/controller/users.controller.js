@@ -52,12 +52,7 @@ const registerUser = async (req, res) => {
     if (user) {
       return res.status(401).json({ message: "User already exists" });
     }
-
-    // Check if image is uploaded
-    const profileImage = req.file.path;
-    console.log(profileImage);
-
-    const profilePicture = await uploadImageToCloudinary(profileImage);
+    const profilePicture = await uploadImageToCloudinary(req.file.buffer);
     console.log(profilePicture);
     
     const createUser = await User.create({
