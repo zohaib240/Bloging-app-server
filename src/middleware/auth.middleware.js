@@ -37,17 +37,6 @@ export default authenticateUser;
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 // import jwt from "jsonwebtoken";
 
 // const authenticateUser =async (req,res,next)=>{

@@ -146,7 +146,7 @@ const singleUser = async (req, res) => {
   try {
       console.log("Decoded User from Middleware:", req.user); // Debugging ke liye
 
-      if (!req.user || !req.user.id) {
+      if (!req.user) {
           return res.status(401).json({ message: "Unauthorized, no user found in token" });
       }
 
