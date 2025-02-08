@@ -144,13 +144,12 @@ const logoutUser = (req, res) => {
 
 const singleUser = async (req, res) => {
   try {
-      console.log("Decoded User from Middleware:", req.user); // Debugging ke liye
-
+      console.log("Decoded User from Middleware:", req.user); // Debugging ke liy
       if (!req.user) {
           return res.status(401).json({ message: "Unauthorized, no user found in token" });
       }
 
-      const user = await User.findById(req.user.id).select('-password -publishedBlogs');
+      const user = await User.findById(req.user._id).select('-password -publishedBlogs');
       if (!user) {
           return res.status(404).json({ message: "User not found in database" });
       }
