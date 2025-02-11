@@ -100,13 +100,13 @@ const loginUser = async (req, res) => {
     const refreshToken = generateRefreshtoken(user);
 
     // ✅ Refresh token ko httpOnly cookie me save karo
-    res.cookie("accessToken", accessToken, {
+    res.cookie("refreshToken",refreshToken, {
       httpOnly: true,
       secure: true,
       sameSite: "none",
     });
 
-    res.status(200).json({ message: "Login successful!", refreshToken });
+    res.status(200).json({ message: "Login successful!", accessToken });
 
   } catch (error) {
     res.status(500).json({ message: "An error occurred during login" });
