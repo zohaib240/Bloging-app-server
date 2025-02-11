@@ -132,6 +132,8 @@ const logoutUser = (req, res) => {
 
 const singleUser = async (req, res) => {
   const decodedeUser = req.user
+  console.log(decodedeUser);
+  
   try {
       if (!decodedeUser) {
           return res.status(401).json({ message: "Unauthorized, no user found in token" });
