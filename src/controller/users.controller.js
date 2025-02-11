@@ -100,7 +100,7 @@ const loginUser = async (req, res) => {
     const refreshToken = generateRefreshtoken(user);
 
     // ✅ Refresh token ko httpOnly cookie me save karo
-    res.cookie("refreshToken",refreshToken, {
+    res.cookie("accessToken",accessToken, {
       httpOnly: true,
       secure: true,
       sameSite: "none",
