@@ -32,7 +32,7 @@ const app = express(); // `app` ko pehle initialize karo
 // Use CORS middleware globally
 // app.use(cors(corsOptions));
 
-app.use(cors())
+app.use(cors({}))
 
 // Middleware
 app.use(express.json());
