@@ -131,27 +131,49 @@ const logoutUser = (req, res) => {
 
 // get singleUser ------->>>>>
 
+// const singleUser = async (req, res) => {
+//   const decodedeUser = req.user
+//   console.log(decodedeUser);
+  
+//   try {
+//       if (!decodedeUser) {
+//           return res.status(401).json({ message: "Unauthorized, no user found in token" });
+//       }
+
+//       const user = await User.findById(decodedeUser.id).select('-password -publishedBlogs');
+//       if (!user) {
+//           return res.status(404).json({ message: "User not found in database" });
+//       }
+
+//       res.status(200).json(user);
+//       return
+//   } catch (error) {
+//       console.error(error);
+//       res.status(500).json({ message: "Server error" });
+//   }
+// };
+
 const singleUser = async (req, res) => {
-  const decodedeUser = req.user
+  const decodedeUser = req.user;
   console.log(decodedeUser);
   
   try {
-      if (!decodedeUser) {
-          return res.status(401).json({ message: "Unauthorized, no user found in token" });
-      }
+    if (!decodedeUser) {
+      return res.status(401).json({ message: "Unauthorized, no user found in token" });
+    }
 
-      const user = await User.findById(decodedeUser.id).select('-password -publishedBlogs');
-      if (!user) {
-          return res.status(404).json({ message: "User not found in database" });
-      }
+    const user = await User.findById(decodedeUser.id).select('-password -publishedBlogs');
+    if (!user) {
+      return res.status(404).json({ message: "User not found in database" });
+    }
 
-      res.status(200).json(user);
-      return
+    res.status(200).json({ user }); // ✅ Wrap user in an object
   } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Server error" });
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
   }
 };
+
 
 
 // refreresh Token ------->>>>>>>>
