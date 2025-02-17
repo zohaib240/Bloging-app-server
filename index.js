@@ -32,7 +32,10 @@ const corsOptions = {
 // Use CORS middleware globally
 app.use(cors(corsOptions));
 
-// app.use(cors({}))
+app.use((req, res, next) => {
+  console.log(req.headers);  // Log headers to see what's coming
+  next();
+});
 
 // Middleware
 app.use(express.json());
@@ -42,6 +45,8 @@ app.use(cookieParser());
 // Routes
 app.use("/api/v1", router);
 app.use("/api/v1", blogrouter);
+
+
 app.get("/getcookie",(req,res)=>{
   res.json({
     cookie : req.cookies

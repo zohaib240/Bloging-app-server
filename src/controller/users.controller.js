@@ -168,6 +168,8 @@ const singleUser = async (req, res) => {
     }
 
     res.status(200).json({ user }); // ✅ Wrap user in an object
+    console.log("Fetched User:", user); // ✅ CHECK THIS
+
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
