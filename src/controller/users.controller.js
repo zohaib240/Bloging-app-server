@@ -43,47 +43,6 @@ const registerUser = async (req, res) => {
   }
 };
 
-// const loginUser = async (req, res) => {
-//   const { email, password } = req.body;
-
-//   if (!email) return res.status(400).json({ message: "email required" });
-//   if (!password) return res.status(400).json({ message: "password required" });
-
-//   try {
-//       // Check if user exists
-//       const user = await User.findOne({ email });
-//       if (!user) return res.status(404).json({ message: "user not found" });
-
-//       // Compare password using bcrypt
-//       const isPasswordValid = await bcrypt.compare(password, user.password);
-//       if (!isPasswordValid) return res.status(401).json({ message: "incorrect password" });
-
-//       // Generate tokens
-//       const accessToken = generateAccesstoken(user);
-//       const refreshToken = generateRefreshtoken(user);
-
-//       // Set refresh token in cookie
-//       res
-//           .cookie("refreshToken", refreshToken, { 
-//               httpOnly: true, 
-//               secure: process.env.NODE_ENV === 'production', 
-//               maxAge: 24 * 60 * 60 * 1000 
-//           })
-//           .status(200)
-//           .json({
-//               message: "User successfully logged in!",
-//               data: user,
-//               tokens: {
-//                   accessToken,
-//                   refreshToken
-//               }
-//           });
-//   } catch (error) {
-//       console.error(error);
-//       res.status(500).json({ message: "An error occurred during login" });
-//   }
-// };
-
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
@@ -131,31 +90,10 @@ const logoutUser = (req, res) => {
 
 // get singleUser ------->>>>>
 
-// const singleUser = async (req, res) => {
-//   const decodedeUser = req.user
-//   console.log(decodedeUser);
-  
-//   try {
-//       if (!decodedeUser) {
-//           return res.status(401).json({ message: "Unauthorized, no user found in token" });
-//       }
-
-//       const user = await User.findById(decodedeUser.id).select('-password -publishedBlogs');
-//       if (!user) {
-//           return res.status(404).json({ message: "User not found in database" });
-//       }
-
-//       res.status(200).json(user);
-//       return
-//   } catch (error) {
-//       console.error(error);
-//       res.status(500).json({ message: "Server error" });
-//   }
-// };
-
 const singleUser = async (req, res) => {
   const decodedeUser = req.user;
   console.log(decodedeUser);
+  console.log("Decoded User:", req.user);  // ✅ CHECK Karo Backend Console Me
   
   try {
     if (!decodedeUser) {
