@@ -1,18 +1,9 @@
 import blogs from "../model/blogs.model.js";
 import { v2 as cloudinary } from "cloudinary";
-import fs from "fs"
 import mongoose from "mongoose";
-// cloudinary image upload k lye
-
-cloudinary.config({ 
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET, // Click 'View API Keys' above to copy your API secret
-});
-
-
-
-
+import { uploadImageToCloudinary } from "../utils/cloudinary.utils.js";
+ 
+// post blog ------>>>>>
 
 const addBlog = async(req,res) =>{
 const {title,description,postedBy} = req.body
@@ -21,22 +12,18 @@ if (!title || !description || !postedBy) {
     return res.status(400).json({ error: "title,description and postedBy required" });
   }
   try {
-    // Check if image is uploaded
-    if (!req.file) {
-        return res.status(400).json({ error: "image is required" });
-      }
-      const Image = req.file.path;
-      console.log(Image);
+
 
 //    upload image on  cloudinary and response url from cloudinary
-      const blogImage = await uploadImageToCloudinary(Image);
-      console.log(blogImage);
+
+const blogPicture = await uploadImageToCloudinary(req.file.buffer);
+console.log( 'blog picture' , blogPicture);
 
     const createBlogs = await blogs.create({
       title,
       description,
       postedBy,
-      blogImage,
+      blogPicture : blogPicture
     });
 
     res.json({
@@ -50,25 +37,7 @@ if (!title || !description || !postedBy) {
   }
 }
 
-// upload image on cloudinary  and delete in upload folder ------->>>>>
-
-const uploadImageToCloudinary = async (localpath) => {
-  try {
-    const uploadResult = await cloudinary.uploader.upload(localpath, {
-      resource_type: "auto",
-    });
-
-    if (uploadResult) {
-      fs.unlinkSync(localpath); // Delete local image
-    }
-
-    return uploadResult.url;
-  } catch (error) {
-    console.log(error);
-    throw new Error("Error uploading image to Cloudinary");
-  }
-};
-
+// get all blogs  ----->>>>
 
 const allBlogs =async (req,res)=>{
   try {
@@ -82,25 +51,31 @@ const allBlogs =async (req,res)=>{
       }
 }
 
-// get single Blog
+// get single Blog ----->>>
 
-const singleBlog =async (req,res)=>{
-  const {id} = req.params
-  if (!mongoose.Types.ObjectId.isValid(id)){
-    res.status(400).json({
-      message : "invalid id"
-    })
+
+const singleuserBlogs = async (req, res) => {
+  const { id } = req.params; // ✅ yaha 'id' actually user ka _id hoga
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ message: "Invalid user ID" });
   }
   try {
-    const singlePost = await blogs.findById(id)
-    res.status(200).json({singlePost})
+    // ✅ Ab ek blog nahi, balki user ke saare blogs fetch honge
+    const userBlogs = await blogs.find({ postedBy: id });
+
+    if (!userBlogs.length) {
+      return res.status(404).json({ message: "No blogs found for this user" });
+    }
+
+    res.status(200).json(userBlogs);
   } catch (error) {
-    console.log(error.message||error);
-    res.status(500).json({
-      message : "some thing went wrong"
-    })
-      }
-}
+    console.log(error.message || error);
+    res.status(500).json({ message: "Something went wrong" });
+  }
+};
+
+
+
 
 // delete Blog
 
@@ -160,7 +135,4 @@ try {
   
 }
 
-
-
-
-export  {addBlog,allBlogs,deleteBlog,editBlog,singleBlog}
+export  {addBlog,allBlogs,deleteBlog,editBlog,singleuserBlogs}

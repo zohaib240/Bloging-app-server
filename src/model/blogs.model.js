@@ -9,9 +9,8 @@ const blogsSchema = new mongoose.Schema({
       type: String,
       required: [true, "description is required"],
     },
-    blogImage: {
-        type: String,
-        required: [true, "blogimage is required"],
+    blogPicture: {
+        type: String
       },
       postedBy: {
         type: mongoose.Schema.Types.ObjectId,
