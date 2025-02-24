@@ -1,13 +1,11 @@
-import dotenv from "dotenv";
-dotenv.config()
 import express from "express";
 import connectDB from "./src/db/index.js";
-// import dotenv from "dotenv";
+import dotenv from "dotenv";
 import router from './src/routes/users.routes.js'; // Correct import path
 import blogrouter from "./src/routes/blogs.routes.js";
 import cookieParser from "cookie-parser";
 import cors from "cors"
-// dotenv.config();
+dotenv.config();
 
 const app = express(); // `app` ko pehle initialize karo
 
