@@ -115,7 +115,7 @@ const editBlog = async (req,res) =>{
     })
   }
 try {
-  const updateBlog = await blogs.findByIdAndUpdate(id,{...req.body})
+  const updateBlog = await blogs.findByIdAndUpdate(id,{...req.body},{ new: true })
   if (!updateBlog) {
     res.status(404).json({
         message: "blog not found",
@@ -123,7 +123,9 @@ try {
     return
   }
   res.status(200).json({
-    message : "update blog Successfully"
+    message : "update blog Successfully",
+    blog: updateBlog, // ✅ Yeh return kar raha hoon
+
   })
   
 } catch (error) {
