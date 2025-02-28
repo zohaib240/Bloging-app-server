@@ -43,82 +43,82 @@ const registerUser = async (req, res) => {
   }
 };
 
-// const loginUser = async (req, res) => {
-//   const { email, password } = req.body;
-
-//   if (!email || !password) return res.status(400).json({ message: "email and password required" });
-
-//   try {
-//     const user = await User.findOne({ email });
-
-//     if (!user) return res.status(404).json({ message: "User not found" });
-
-//     const isPasswordValid = await bcrypt.compare(password, user.password);
-//     if (!isPasswordValid) return res.status(401).json({ message: "Incorrect password" });
-
-//     const accessToken = generateAccesstoken(user);
-//     const refreshToken = generateRefreshtoken(user);
-
-//     // ✅ Refresh token ko httpOnly cookie me save karo
-//     res.cookie("accessToken",accessToken, {
-//       httpOnly: true,
-//       secure: true,
-//       sameSite: "none",
-//     });
-
-//     res.status(200).json({ message: "Login successful!", accessToken , user });
-
-//   } catch (error) {
-//     res.status(500).json({ message: "An error occurred during login" });
-//   }
-// };
-
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
-  if (!email || !password) {
-    return res.status(400).json({ message: "Email and password are required" });
-  }
+  if (!email || !password) return res.status(400).json({ message: "email and password required" });
 
   try {
     const user = await User.findOne({ email });
 
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
+    if (!user) return res.status(404).json({ message: "User not found" });
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      return res.status(401).json({ message: "Incorrect password" });
-    }
+    if (!isPasswordValid) return res.status(401).json({ message: "Incorrect password" });
 
-    // 🔹 Tokens generate karein
     const accessToken = generateAccesstoken(user);
     const refreshToken = generateRefreshtoken(user);
 
-    // 🔹 Access token ko HTTP-only cookie mein save karein
-    res.cookie("accessToken", accessToken, {
+    // ✅ Refresh token ko httpOnly cookie me save karo
+    res.cookie("accessToken",accessToken, {
       httpOnly: true,
-      secure: true, // HTTPS ke liye
-      sameSite: "none", // Cross-site requests allow karne ke liye
-      maxAge: 15 * 60 * 1000, // 15 minutes (access token expiry time)
+      secure: true,
+      sameSite: "none",
     });
 
-    // 🔹 Refresh token ko HTTP-only cookie mein save karein
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      secure: true, // HTTPS ke liye
-      sameSite: "none", // Cross-site requests allow karne ke liye
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days (refresh token expiry time)
-    });
+    res.status(200).json({ message: "Login successful!", accessToken , user });
 
-    // 🔹 Response mein user data bhejein (optional)
-    res.status(200).json({ message: "Login successful!", user });
   } catch (error) {
-    console.error("Login error:", error);
     res.status(500).json({ message: "An error occurred during login" });
   }
 };
+
+// const loginUser = async (req, res) => {
+//   const { email, password } = req.body;
+
+//   if (!email || !password) {
+//     return res.status(400).json({ message: "Email and password are required" });
+//   }
+
+//   try {
+//     const user = await User.findOne({ email });
+
+//     if (!user) {
+//       return res.status(404).json({ message: "User not found" });
+//     }
+
+//     const isPasswordValid = await bcrypt.compare(password, user.password);
+//     if (!isPasswordValid) {
+//       return res.status(401).json({ message: "Incorrect password" });
+//     }
+
+//     // 🔹 Tokens generate karein
+//     const accessToken = generateAccesstoken(user);
+//     const refreshToken = generateRefreshtoken(user);
+
+//     // 🔹 Access token ko HTTP-only cookie mein save karein
+//     res.cookie("accessToken", accessToken, {
+//       httpOnly: true,
+//       secure: true, // HTTPS ke liye
+//       sameSite: "none", // Cross-site requests allow karne ke liye
+//       maxAge: 15 * 60 * 1000, // 15 minutes (access token expiry time)
+//     });
+
+//     // 🔹 Refresh token ko HTTP-only cookie mein save karein
+//     res.cookie("refreshToken", refreshToken, {
+//       httpOnly: true,
+//       secure: true, // HTTPS ke liye
+//       sameSite: "none", // Cross-site requests allow karne ke liye
+//       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days (refresh token expiry time)
+//     });
+
+//     // 🔹 Response mein user data bhejein (optional)
+//     res.status(200).json({ message: "Login successful!", user });
+//   } catch (error) {
+//     console.error("Login error:", error);
+//     res.status(500).json({ message: "An error occurred during login" });
+//   }
+// };
 
 
 // logout user --------->>>>>
