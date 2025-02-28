@@ -7,10 +7,12 @@ import cookieParser from "cookie-parser";
 import cors from "cors"
 dotenv.config();
 
+// new methode 
+
 const app = express(); // `app` ko pehle initialize karo
 
 const corsOptions = {
-  origin: ['https://bloging-app-client.vercel.app/','http://localhost:5173/'], // Frontend domain
+  origin: '*', // Frontend domain
   methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
   credentials: true, // Allow credentials (cookies, etc.)
 };
