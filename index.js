@@ -12,7 +12,7 @@ dotenv.config();
 const app = express(); // `app` ko pehle initialize karo
 
 const corsOptions = {
-  origin: '*', // Frontend domain
+  origin: ['https://bloging-app-client.vercel.app','http://localhost:5173'], // Frontend domain
   methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
   credentials: true, // Allow credentials (cookies, etc.)
 };
